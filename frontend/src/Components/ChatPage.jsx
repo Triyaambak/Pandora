@@ -1,9 +1,11 @@
 import ChatBox from "./ChatPage/ChatBox";
 
-const ChatPage = () => {
+const ChatPage = ({chatting}) => {
     return(
         <div className='flex flex-col items-center bg-gray-100 w-full p-6 overflow-y-auto'>
-            <ChatBox />
+            <ChatBox
+                chatting={chatting}
+            />
         </div>
     )
 }

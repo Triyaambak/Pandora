@@ -2,7 +2,10 @@ import IconChatText from "../Icons/Text";
 import IconMic from "../Icons/Mic";
 import IconLogoutBoxLine from "../Icons/LogOut";
 
-const SideBar = () => {
+const SideBar = ({ setChatting }) => {
+  const handleClick = () => {
+    setChatting(prev => !prev)
+  }
     return(
       <div className="w-72 bg-gray-800 text-white flex flex-col justify-between items-center">
         <div className='p-4 space-y-4 flex flex-col justify-start items-center'>
@@ -17,11 +20,11 @@ const SideBar = () => {
           </p>
           <label className="swap swap-rotate">
             <input type="checkbox" />
-            <div className="swap-on">
-              <IconChatText />
-            </div>
-            <div className="swap-off">
+            <div className="swap-off" onClick={handleClick}>
               <IconMic />
+            </div>
+            <div className="swap-on" onClick={handleClick}>
+              <IconChatText />
             </div>
           </label>
         </div>
