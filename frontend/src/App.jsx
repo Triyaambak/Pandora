@@ -1,20 +1,36 @@
-import { useState } from 'react'
-import ChatPage from './Components/ChatPage'
-import SideBar from './Components/SideBar'
+import Home from "./Components/Home";
+import Register from "./Components/Register";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useAuthContext } from "./utils/authContext";
+import { useEffect } from "react";
 
 const App = () => {
-  const [chatting, setChatting] = useState(false);
-  console.log(chatting);
-  return( 
-    <div className='flex h-screen'>
-      <SideBar
-        setChatting={setChatting}
-      />
-      <ChatPage
-        chatting={chatting}
-      />
-    </div>
-  )
-}
+    const { authUser } = useAuthContext();
+    useEffect(() => {
+        const cleanup = () => {
+            localStorage.removeItem("token");
+        };
 
-export default App
+        window.addEventListener("beforeunload", cleanup);
+
+        return () => {
+            window.removeEventListener("beforeunload", cleanup);
+        };
+    }, []);
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
+                <Route
+                    path="/"
+                    element={<Home />}
+                />
+            </Routes>
+        </BrowserRouter>
+    );
+};
+
+export default App;

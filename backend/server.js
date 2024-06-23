@@ -2,23 +2,17 @@ import "dotenv/config";
 import "express-async-errors";
 
 import express from "express";
-import cors from "cors";
-
-const app = express();
+import { app, server } from "./socket/socket.js";
 
 import connectDB from "./connectDB/connect.js";
 import authRoutes from "./routes/authRoutes.js";
+import commRoutes from "./routes/commRoutes.js";
 import errorHandlerMiddleware from "./middleware/errorHandleMiddleware.js";
 import notFoundMiddleware from "./middleware/notFoundMiddleware.js";
 
-app.use(
-    cors({
-        origin: "http://localhost:3000/",
-    })
-);
-
 app.use(express.json());
-app.use("api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/comm", commRoutes);
 app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
 
@@ -28,7 +22,7 @@ const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI);
         console.log(`Databse connected`);
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server listening on port ${PORT} ...`);
         });
     } catch (error) {
