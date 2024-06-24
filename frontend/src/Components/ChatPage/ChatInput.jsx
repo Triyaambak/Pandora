@@ -2,21 +2,51 @@ import { useRef, useState } from "react";
 import IconMic from "../../Icons/Mic";
 import { useSocketContext } from "../../utils/socketContext";
 import audioFilePath from "../../../temp/audioOutput.mp3";
+import axios from "axios";
+import { useAuthContext } from "../../utils/authContext";
+import { useMessageContext } from "../../utils/messageContext";
 
 const ChatInput = ({ chatting }) => {
     const { socket } = useSocketContext();
+    const { authUser } = useAuthContext();
+    const { setMessages } = useMessageContext();
     const [recording, setRecording] = useState();
     const [chatInput, setChatInput] = useState("");
     const mediaRecorderRef = useRef();
     const chunksRef = useRef([]);
+
     const play = (audioFilePath) => {
         new Audio(audioFilePath).play();
     };
-    const handleKeyPress = (event) => {
-        if (event.target === "Enter") alert("hey");
-    };
-    const handleChatInputChange = (event) => {
-        setChatInput(event.target.value);
+
+    const handleKeyPress = async (event) => {
+        if (event.key === "Enter") {
+            try {
+                const { data } = await axios.post(
+                    "http://localhost:3001/api/message/getOutput",
+                    { chatInput }
+                );
+                socket.emit(
+                    "saveMessage",
+                    chatInput,
+                    data.output,
+                    localStorage.getItem("jwt-token"),
+                    authUser ? authUser.id : null,
+                    (chatInput, chatOutput) => {
+                        setMessages((prevMessage) => [
+                            ...prevMessage,
+                            chatInput,
+                            chatOutput,
+                        ]);
+                    }
+                );
+                setChatInput("");
+            } catch (error) {
+                console.log(
+                    `Error while getting output for this message ${error}`
+                );
+            }
+        }
     };
     const handleMicClick = async () => {
         if (!recording) {
@@ -27,7 +57,6 @@ const ChatInput = ({ chatting }) => {
                 });
                 const mediaRecorder = new MediaRecorder(stream);
                 mediaRecorderRef.current = mediaRecorder;
-
                 mediaRecorder.ondataavailable = (event) => {
                     chunksRef.current.push(event.data);
                 };
@@ -37,8 +66,22 @@ const ChatInput = ({ chatting }) => {
                         type: "audio/webm",
                     });
                     chunksRef.current = [];
-                    socket.emit("speechToText", audioBlob, (res) => {
-                        socket.emit("textToSpeech", res, () => {
+                    socket.emit("speechToText", audioBlob, (chatInput) => {
+                        socket.emit("textToSpeech", chatInput, (chatOutput) => {
+                            socket.emit(
+                                "saveMessage",
+                                chatInput,
+                                chatOutput,
+                                localStorage.getItem("jwt-token"),
+                                authUser ? authUser.id : null,
+                                (chatInput, chatOutput) => {
+                                    setMessages((prevMessage) => [
+                                        ...prevMessage,
+                                        chatInput,
+                                        chatOutput,
+                                    ]);
+                                }
+                            );
                             play(audioFilePath);
                         });
                     });
@@ -60,9 +103,9 @@ const ChatInput = ({ chatting }) => {
                 <input
                     type="text"
                     placeholder="Chat With Us"
-                    className=" bg-white rounded-2xl h-10 w-full mt-5 p-4"
+                    className=" bg-white rounded-2xl h-10 w-full mt-5 p-4 text-black"
                     value={chatInput}
-                    onChange={handleChatInputChange}
+                    onChange={(event) => setChatInput(event.target.value)}
                     onKeyDown={handleKeyPress}
                 />
             ) : (

@@ -8,7 +8,7 @@ const App = () => {
     const { authUser } = useAuthContext();
     useEffect(() => {
         const cleanup = () => {
-            localStorage.removeItem("token");
+            localStorage.removeItem("jwt-token");
         };
 
         window.addEventListener("beforeunload", cleanup);

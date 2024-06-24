@@ -7,7 +7,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import axios from "axios";
-import { log } from "console";
 
 const app = express();
 
@@ -63,19 +62,45 @@ io.on("connection", async (socket) => {
                 "../.././frontend/./temp/audioOutput.mp3"
             );
 
+            const { data } = await axios.post(
+                "http://localhost:3001/api/message/getOutput",
+                { chatInput: text }
+            );
+
             const res = await axios.post(
                 "http://localhost:3001/api/comm/getSpeech",
                 {
                     tempFilePath,
-                    text,
+                    text: data.output,
                 }
             );
 
-            callback();
+            callback(data.output);
         } catch (error) {
             console.log(error);
         }
     });
+
+    socket.on(
+        "saveMessage",
+        async (chatInput, chatOutput, token, id, callback) => {
+            if (token && id) {
+                const res = await axios.post(
+                    "http://localhost:3001/api/message/saveMessage",
+                    {
+                        userId: id,
+                        message: [chatInput, chatOutput],
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+            callback(chatInput, chatOutput);
+        }
+    );
 });
 
 export { app, io, server };

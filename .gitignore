@@ -9,6 +9,7 @@ lerna-debug.log*
 yarn.lock
 temp
 sample
+.venv
 
 node_modules
 dist

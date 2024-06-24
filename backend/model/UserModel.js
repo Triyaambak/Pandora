@@ -2,6 +2,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -35,6 +36,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
+    gender: {
+        type: String,
+        required: [true, "Please provide Gender"],
+        enum: ["male", "female"],
+    },
 });
 
 UserSchema.pre("save", async function (next) {
@@ -44,7 +50,7 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.methods.createJWT = function () {
-    return jwt.sign({ userId: this._id }, process.env.JWT_SECRET);
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET);
 };
 
 UserSchema.methods.comparePasswords = async function (candidatePassword) {
