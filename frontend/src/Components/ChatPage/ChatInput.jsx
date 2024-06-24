@@ -10,7 +10,7 @@ const ChatInput = ({ chatting }) => {
     const { socket } = useSocketContext();
     const { authUser } = useAuthContext();
     const { setMessages } = useMessageContext();
-    const [recording, setRecording] = useState();
+    const [recording, setRecording] = useState(false);
     const [chatInput, setChatInput] = useState("");
     const mediaRecorderRef = useRef();
     const chunksRef = useRef([]);
@@ -110,7 +110,11 @@ const ChatInput = ({ chatting }) => {
                 />
             ) : (
                 <IconMic
-                    className="mt-5"
+                    className={
+                        recording
+                            ? "text-red-700 mt-5 cursor-pointer"
+                            : "mt-5 cursor-pointer"
+                    }
                     onClick={handleMicClick}
                 />
             )}

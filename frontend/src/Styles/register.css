@@ -9,7 +9,6 @@
 }
 
 body {
-    background: peachpuff;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -180,7 +179,7 @@ header {
 }
 
 .input-box {
-    padding-top: 1.2rem;
+    padding-top: 0.5rem;
 }
 
 .input-field {

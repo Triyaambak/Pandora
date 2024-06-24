@@ -5,9 +5,10 @@ import { useAuthContext } from "./utils/authContext";
 import { useEffect } from "react";
 
 const App = () => {
-    const { authUser } = useAuthContext();
+    const { setAuthUser } = useAuthContext();
     useEffect(() => {
         const cleanup = () => {
+            setAuthUser("");
             localStorage.removeItem("jwt-token");
         };
 

@@ -6,8 +6,13 @@ import { useAuthContext } from "../utils/authContext";
 
 const SideBar = ({ setChatting }) => {
     const navigate = useNavigate();
-    const { authUser } = useAuthContext();
+    const { authUser, setAuthUser } = useAuthContext();
     const defaultPicture = `https://avatar.iran.liara.run/public`;
+    const handleClick = () => {
+        localStorage.removeItem("jwt-token");
+        setAuthUser("");
+        navigate("/register");
+    };
     return (
         <div className="w-72 bg-gray-800 text-white flex flex-col justify-between items-center">
             <div className="p-4 space-y-4 flex flex-col justify-start items-center">
@@ -62,7 +67,12 @@ const SideBar = ({ setChatting }) => {
                         </span>
                     </p>
                 )}
-                <IconLogoutBoxLine onClick={() => navigate("/register")} />
+                {authUser && (
+                    <IconLogoutBoxLine
+                        className="cursor-pointer"
+                        onClick={handleClick}
+                    />
+                )}
             </div>
         </div>
     );

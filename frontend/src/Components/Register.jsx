@@ -10,10 +10,10 @@ const Register = () => {
     const [showLogin, setShowLogin] = useState(true);
 
     return (
-        <div className="wrapper">
+        <div className="wrapper bg-gray-800">
             <nav className="nav">
                 <div className="nav-logo">
-                    <p>LOGO .</p>
+                    <p>PANDORA</p>
                 </div>
                 <div
                     className="nav-menu"

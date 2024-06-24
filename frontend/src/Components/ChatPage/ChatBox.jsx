@@ -27,18 +27,22 @@ const ChatBox = ({ chatting }) => {
     }, [authUser]);
     return (
         <div className="w-full h-full bg-gray-800 rounded-2xl overflow-hidden p-6 flex flex-col items-center justify-evenly">
-            <div className=" w-5/6 ml-10 mt-12 mr-10 h-5/6 bg-white bg-opacity-5 rounded-2xl flex flex-col justify-center items-start text-white pl-10">
+            <div className="w-5/6 ml-10 mt-12 mr-10 h-5/6 bg-white bg-opacity-5 rounded-2xl flex flex-col justify-center items-start text-white pl-10 overflow-y-auto">
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
                         <div
                             key={index}
-                            className="chat-bubble bg-gray-800 m-2"
+                            className={`chat-bubble break-words ${
+                                index % 2 === 0
+                                    ? "bg-gray-400 text-black"
+                                    : "bg-black text-gray-400"
+                            } m-2 p-3 rounded w-full`}
                         >
                             {message}
                         </div>
                     ))
                 ) : (
-                    <div className="chat-bubble bg-gray-800 m-2">
+                    <div className="chat-bubble bg-gray-800 m-2 p-3 rounded w-full">
                         <p className="font-bold">Welcome to Pandora!</p>
                         <p>
                             We’re thrilled to have you here. At Pandora, our
